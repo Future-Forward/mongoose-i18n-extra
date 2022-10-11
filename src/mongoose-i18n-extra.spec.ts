@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-let sampleId = mongoose.Types.ObjectId().toString();
+let sampleId = new mongoose.Types.ObjectId().toString();
 let Sample: any;
 
 describe("Plugin mongooseI18nExtra", () => {
@@ -24,16 +24,17 @@ describe("Plugin mongooseI18nExtra", () => {
     const schema = new Schema(
       {
         name: { type: String },
-        description: { type: String, i18n: true }
+        description: { type: String, i18n: true },
       },
       {
-        strict: "throw"
+        strict: "throw",
       }
     );
 
     schema.plugin(mongooseI18nExtra, {
       languages: ["en", "de", "fr"],
-      defaultLanguage: "en"
+      defaultLanguage: "en",
+      language: "en",
     });
     schema.plugin(mongooseLeanVirtuals);
     Sample = mongoose.model("Sample", schema);
@@ -46,7 +47,7 @@ describe("Plugin mongooseI18nExtra", () => {
       let sample = new Sample({
         _id: sampleId,
         name: "test",
-        description: "desc en"
+        description: "desc en",
       });
       expect(sample._id.toString()).toBe(sampleId.toString());
       await sample.save();
@@ -60,7 +61,7 @@ describe("Plugin mongooseI18nExtra", () => {
       expect(sample._i18n).toEqual({
         de: { description: null },
         en: { description: "desc en" },
-        fr: { description: null }
+        fr: { description: null },
       });
     });
 
@@ -81,7 +82,7 @@ describe("Plugin mongooseI18nExtra", () => {
       expect(sample._i18n).toEqual({
         de: { description: null },
         en: { description: "desc en" },
-        fr: { description: "desc fr" }
+        fr: { description: "desc fr" },
       });
 
       sample.set({ description: "desc2 fr" });
@@ -101,8 +102,8 @@ describe("Plugin mongooseI18nExtra", () => {
       {
         $set: {
           name: "name with findOneAndUpdate",
-          description: "desc en with findOneAndUpdate"
-        }
+          description: "desc en with findOneAndUpdate",
+        },
       },
       { strict: true }
     );
@@ -116,7 +117,7 @@ describe("Plugin mongooseI18nExtra", () => {
     expect(sample._i18n).toEqual({
       de: { description: null },
       en: { description: "desc en with findOneAndUpdate" },
-      fr: { description: "desc2 fr" }
+      fr: { description: "desc2 fr" },
     });
   });
 
@@ -133,7 +134,7 @@ describe("Plugin mongooseI18nExtra", () => {
     expect(sample._i18n).toEqual({
       de: { description: null },
       en: { description: "test fr" },
-      fr: { description: "test fr" }
+      fr: { description: "test fr" },
     });
   });
 
@@ -143,8 +144,8 @@ describe("Plugin mongooseI18nExtra", () => {
     sample.set({
       _i18n: {
         fr: { description: "test fr" },
-        de: { description: "test de" }
-      }
+        de: { description: "test de" },
+      },
     });
     await sample.save();
 
@@ -160,8 +161,8 @@ describe("Plugin mongooseI18nExtra", () => {
       _i18n: {
         fr: { description: "test fr" },
         en: { description: "test en" },
-        de: { description: "test de" }
-      }
+        de: { description: "test de" },
+      },
     });
   });
 
@@ -172,8 +173,8 @@ describe("Plugin mongooseI18nExtra", () => {
       _i18n: {
         fr: { description: "test fr" },
         en: { description: "test en" },
-        de: { description: "test de" }
-      }
+        de: { description: "test de" },
+      },
     });
 
     await sample.save();
@@ -190,55 +191,55 @@ describe("Plugin mongooseI18nExtra", () => {
     const valueStoredInDatabase = {
       _id: sample._id,
       __v: sample.__v,
-      description: "test en"
+      description: "test en",
     };
 
     const i18nValuesInDatabase = {
       de: { description: "test de" },
       en: { description: null },
-      fr: { description: "test fr" }
+      fr: { description: "test fr" },
     };
 
     const i18nValuesWithGetter = {
       ...i18nValuesInDatabase,
-      en: { description: "test en" }
+      en: { description: "test en" },
     };
 
     const virtualFields = {
       description_fr: "test fr",
       description_en: "test en",
-      description_de: "test de"
+      description_de: "test de",
     };
 
     expect(sample.toJSON()).toEqual({
       ...valueStoredInDatabase,
-      _i18n: i18nValuesWithGetter
+      _i18n: i18nValuesWithGetter,
     });
     expect(sample.toObject({ getters: true })).toEqual({
       ...valueStoredInDatabase,
       id: sample._id.toString(),
       _i18n: i18nValuesWithGetter,
-      ...virtualFields
+      ...virtualFields,
     });
     expect(sample.toObject({ virtuals: true })).toEqual({
       ...valueStoredInDatabase,
       id: sample._id.toString(),
       _i18n: i18nValuesWithGetter,
-      ...virtualFields
+      ...virtualFields,
     });
 
     expect(sample._i18n).toEqual({
       de: { description: "test de" },
       en: { description: "test en" },
-      fr: { description: "test fr" }
+      fr: { description: "test fr" },
     });
 
     sample.set({
       _i18n: {
         fr: { description: "test fr2" },
         en: { description: "test en2" },
-        de: { description: "test de2" }
-      }
+        de: { description: "test de2" },
+      },
     });
 
     await sample.save();
@@ -254,7 +255,7 @@ describe("Plugin mongooseI18nExtra", () => {
     expect(sample._i18n).toEqual({
       de: { description: "test de2" },
       en: { description: "test en2" },
-      fr: { description: "test fr2" }
+      fr: { description: "test fr2" },
     });
   });
 });
