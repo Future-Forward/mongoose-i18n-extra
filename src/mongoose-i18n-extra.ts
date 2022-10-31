@@ -60,6 +60,17 @@ export default function mongooseI18nExtra(
       if (!this.getLanguage || this.getLanguage() === options.defaultLanguage) {
         return value;
       } else {
+        let val = this.get(`_i18n.${this.getLanguage()}.${path}`);
+        if (val) {
+          return val;
+        }
+        if (schemaType.options.fallbackLang) {
+          val = this.get(`_i18n.${schemaType.options.fallbackLang}.${path}`);
+          if (val) {
+            return val;
+          }
+          return value;
+        }
         return this.get(`_i18n.${this.getLanguage()}.${path}`);
       }
     };
