@@ -27,7 +27,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "mongoose": "^7.6.3",
+    "mongoose": "^8.2.2",
     "typescript": "^4.6.2",
     "typescript-eslint-parser": "^22.0.0"
   },
