@@ -1,6 +1,6 @@
 {
   "name": "mongoose-i18n-extra",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "mongoose plugin to manage i18n fields",
   "homepage": "https://github.com/Future-Forward/mongoose-i18n-extra#readme",
   "main": "dist/index.js",
